@@ -1,17 +1,21 @@
-const express = require('express');
+import express from 'express';
+import { transactions, addTransaction } from './transactions.js';
+
 const app = express();
+
+app.use(express.json());
 
 app.get('/', (req, res) => {
   res.send('Hello från Express!');
 });
 
 app.get('/blockchain', (req, res) => {
-  const transactions = [
-    { sender: '', recipient: '', batchId: '1', weightKg: '' },
-    { sender: '', recipient: '', batchId: '2', weightKg: '' }
-  ];
-
   return res.json(transactions);
 });
 
-module.exports = app;
+app.post('/blockchain', (req, res) => {
+  const transaction = addTransaction(req.body);
+  return res.status(201).json(transaction);
+});
+
+export default app;
