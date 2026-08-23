@@ -30,3 +30,15 @@ describe('getLatestBlock', () => {
     expect(blockchain.getLatestBlock()).toBe(blockchain.chain[0]);
   });
 });
+
+describe('addTransaction', () => {
+  it('lägger till transaktionen i pendingTransactions', () => {
+    const blockchain = new Blockchain();
+    const transaction = { sender: 'Gård A', recipient: 'Rosteri B', batchId: '1', weightKg: '20' };
+
+    blockchain.addTransaction(transaction);
+
+    expect(blockchain.pendingTransactions).toContainEqual(transaction);
+    expect(blockchain.pendingTransactions.length).toBe(1);
+  });
+});
