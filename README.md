@@ -72,6 +72,6 @@ Hash- och mining-logiken byggdes med en strikt röd→grön-process: testet skre
 
 ## Testning
 
-- **Enhetstester** (`block.test.js`, `blockchain.test.js`, `add.test.js`): hashberäkning, determinism, mining/Proof-of-Work, `isChainValid`, difficulty via miljövariabler.
+- **Enhetstester** (`block.test.js`, `blockchain.test.js`): hashberäkning, determinism, mining/Proof-of-Work, `isChainValid`, difficulty via miljövariabler.
 - **Integrationstester** (`app.test.js`, via Supertest): `GET /blockchain`, `POST /transactions` (inklusive avvisning av ogiltig indata), `POST /mine`.
 - **Code coverage:** 100 % statements/branches/functions/lines (`npm run coverage`).
