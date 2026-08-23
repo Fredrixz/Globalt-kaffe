@@ -25,6 +25,22 @@ describe('POST /transactions', () => {
   });
 });
 
+describe('POST /transactions - validering', () => {
+  it('avvisar en transaktion som saknar batchId med 400', async () => {
+    const ogiltigTransaktion = { sender: 'Gård A', recipient: 'Rosteri B', weightKg: '20' };
+
+    const res = await request(app).post('/transactions').send(ogiltigTransaktion);
+
+    expect(res.status).toBe(400);
+  });
+
+  it('avvisar en tom body med 400', async () => {
+    const res = await request(app).post('/transactions').send({});
+
+    expect(res.status).toBe(400);
+  });
+});
+
 describe('POST /mine', () => {
   it('minar väntande transaktioner och lägger till ett nytt block i kedjan', async () => {
     await request(app)
