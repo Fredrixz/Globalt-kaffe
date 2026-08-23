@@ -27,4 +27,15 @@ export class Blockchain {
     this.pendingTransactions.push(transaction);
     return transaction;
   }
+
+  minePendingTransactions() {
+    const newBlock = new Block(this.chain.length, Date.now(), this.pendingTransactions, this.getLatestBlock().hash);
+
+    newBlock.mineBlock(this.difficulty);
+
+    this.chain.push(newBlock);
+    this.pendingTransactions = [];
+
+    return newBlock;
+  }
 }
