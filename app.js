@@ -1,5 +1,6 @@
 import express from 'express';
 import { Blockchain } from './blockchain.js';
+import { validateTransaction } from './validateTransaction.js';
 
 const app = express();
 const blockchain = new Blockchain();
@@ -10,7 +11,7 @@ app.get('/blockchain', (req, res) => {
   res.json(blockchain.chain);
 });
 
-app.post('/transactions', (req, res) => {
+app.post('/transactions', validateTransaction, (req, res) => {
   const transaction = blockchain.addTransaction(req.body);
   res.status(201).json(transaction);
 });
