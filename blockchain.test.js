@@ -86,7 +86,7 @@ describe('isChainValid', () => {
     expect(blockchain.isChainValid()).toBe(false);
   });
 
-  it('returnerar false om previousHash-länken har manipulerats', () => {
+  it('returnerar false om ett blocks hash inte längre stämmer med sitt innehåll', () => {
     const blockchain = new Blockchain();
     blockchain.addTransaction({ sender: 'Gård A', recipient: 'Rosteri B', batchId: '1', weightKg: '20' });
     blockchain.minePendingTransactions();
@@ -94,5 +94,48 @@ describe('isChainValid', () => {
     blockchain.chain[1].previousHash = 'förfalskad-hash';
 
     expect(blockchain.isChainValid()).toBe(false);
+  });
+
+  it('returnerar false om previousHash pekar på fel block, även om blockets egen hash stämmer', () => {
+    const blockchain = new Blockchain();
+    blockchain.addTransaction({ sender: 'Gård A', recipient: 'Rosteri B', batchId: '1', weightKg: '20' });
+    blockchain.minePendingTransactions();
+    blockchain.addTransaction({ sender: 'Rosteri B', recipient: 'Kafé C', batchId: '2', weightKg: '15' });
+    blockchain.minePendingTransactions();
+
+    blockchain.chain[2].previousHash = blockchain.chain[0].hash;
+    blockchain.chain[2].hash = blockchain.chain[2].calculateHash();
+
+    expect(blockchain.isChainValid()).toBe(false);
+  });
+});
+
+describe('difficulty via miljövariabler', () => {
+  it('använder DIFFICULTY-miljövariabeln utanför testmiljö', () => {
+    const originalNodeEnv = process.env.NODE_ENV;
+    const originalDifficulty = process.env.DIFFICULTY;
+    process.env.NODE_ENV = 'production';
+    process.env.DIFFICULTY = '3';
+
+    const blockchain = new Blockchain();
+
+    process.env.NODE_ENV = originalNodeEnv;
+    process.env.DIFFICULTY = originalDifficulty;
+
+    expect(blockchain.difficulty).toBe(3);
+  });
+
+  it('faller tillbaka på difficulty 2 om DIFFICULTY saknas utanför testmiljö', () => {
+    const originalNodeEnv = process.env.NODE_ENV;
+    const originalDifficulty = process.env.DIFFICULTY;
+    process.env.NODE_ENV = 'production';
+    delete process.env.DIFFICULTY;
+
+    const blockchain = new Blockchain();
+
+    process.env.NODE_ENV = originalNodeEnv;
+    process.env.DIFFICULTY = originalDifficulty;
+
+    expect(blockchain.difficulty).toBe(2);
   });
 });

@@ -39,6 +39,12 @@ describe('POST /transactions - validering', () => {
 
     expect(res.status).toBe(400);
   });
+
+  it('avvisar ett anrop helt utan body med 400', async () => {
+    const res = await request(app).post('/transactions');
+
+    expect(res.status).toBe(400);
+  });
 });
 
 describe('POST /mine', () => {
