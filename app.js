@@ -1,21 +1,23 @@
 import express from 'express';
-import { transactions, addTransaction } from './transactions.js';
+import { Blockchain } from './blockchain.js';
 
 const app = express();
+const blockchain = new Blockchain();
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello från Express!');
-});
-
 app.get('/blockchain', (req, res) => {
-  return res.json(transactions);
+  res.json(blockchain.chain);
 });
 
-app.post('/blockchain', (req, res) => {
-  const transaction = addTransaction(req.body);
-  return res.status(201).json(transaction);
+app.post('/transactions', (req, res) => {
+  const transaction = blockchain.addTransaction(req.body);
+  res.status(201).json(transaction);
+});
+
+app.post('/mine', (req, res) => {
+  const block = blockchain.minePendingTransactions();
+  res.status(201).json(block);
 });
 
 export default app;
