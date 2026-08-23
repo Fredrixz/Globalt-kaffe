@@ -66,3 +66,33 @@ describe('minePendingTransactions (mining)', () => {
     expect(blockchain.pendingTransactions).toEqual([]);
   });
 });
+
+describe('isChainValid', () => {
+  it('returnerar true för en oförändrad kedja', () => {
+    const blockchain = new Blockchain();
+    blockchain.addTransaction({ sender: 'Gård A', recipient: 'Rosteri B', batchId: '1', weightKg: '20' });
+    blockchain.minePendingTransactions();
+
+    expect(blockchain.isChainValid()).toBe(true);
+  });
+
+  it('returnerar false om ett blocks transaktioner har manipulerats', () => {
+    const blockchain = new Blockchain();
+    blockchain.addTransaction({ sender: 'Gård A', recipient: 'Rosteri B', batchId: '1', weightKg: '20' });
+    blockchain.minePendingTransactions();
+
+    blockchain.chain[1].transactions = [{ sender: 'Fuskare', recipient: 'Okänd', batchId: '999', weightKg: '9999' }];
+
+    expect(blockchain.isChainValid()).toBe(false);
+  });
+
+  it('returnerar false om previousHash-länken har manipulerats', () => {
+    const blockchain = new Blockchain();
+    blockchain.addTransaction({ sender: 'Gård A', recipient: 'Rosteri B', batchId: '1', weightKg: '20' });
+    blockchain.minePendingTransactions();
+
+    blockchain.chain[1].previousHash = 'förfalskad-hash';
+
+    expect(blockchain.isChainValid()).toBe(false);
+  });
+});
