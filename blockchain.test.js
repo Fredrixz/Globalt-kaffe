@@ -42,3 +42,27 @@ describe('addTransaction', () => {
     expect(blockchain.pendingTransactions.length).toBe(1);
   });
 });
+
+describe('minePendingTransactions (mining)', () => {
+  it('minar ett nytt block med de väntande transaktionerna och lägger till det i kedjan', () => {
+    const blockchain = new Blockchain();
+    const transaction = { sender: 'Gård A', recipient: 'Rosteri B', batchId: '1', weightKg: '20' };
+    blockchain.addTransaction(transaction);
+
+    const minedBlock = blockchain.minePendingTransactions();
+
+    expect(blockchain.chain.length).toBe(2);
+    expect(minedBlock.transactions).toContainEqual(transaction);
+    expect(minedBlock.previousHash).toBe(blockchain.chain[0].hash);
+    expect(minedBlock.hash.startsWith('0'.repeat(blockchain.difficulty))).toBe(true);
+  });
+
+  it('tömmer pendingTransactions efter mining', () => {
+    const blockchain = new Blockchain();
+    blockchain.addTransaction({ sender: 'Gård A', recipient: 'Rosteri B', batchId: '1', weightKg: '20' });
+
+    blockchain.minePendingTransactions();
+
+    expect(blockchain.pendingTransactions).toEqual([]);
+  });
+});
